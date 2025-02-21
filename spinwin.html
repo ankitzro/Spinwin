@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spin and Win Game</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      transition: background 0.5s ease;
+    }
+
+    body.logged-in {
+      background: linear-gradient(135deg, #ff6f61, #ffcc5c);
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      animation: fadeIn 1s ease-in-out;
+      position: relative;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #2575fc, #6a11cb);
+    }
+
+    #save-name-button {
+      background: linear-gradient(135deg, #4caf50, #45a049);
+    }
+
+    #save-name-button:hover {
+      background: linear-gradient(135deg, #45a049, #4caf50);
+    }
+
+    #logout-button-popup {
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    }
+
+    #logout-button-popup:hover {
+      background: linear-gradient(135deg, #ff4b2b, #ff416c);
+    }
+
+    #withdraw-button {
+      background: linear-gradient(135deg, #28a745, #218838);
+    }
+
+    #withdraw-button:hover {
+      background: linear-gradient(135deg, #218838, #28a745);
+    }
+
+    .balance-info {
+      margin: 20px 0;
+      font-size: 1.2rem;
+    }
+
+    .balance-info span {
+      font-weight: bold;
+      color: #ffdd57;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Profile and Logout Icons */
+    .icon-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .icon {
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      transition: color 0.3s ease;
+    }
+
+    .icon:hover {
+      color: #ffdd57;
+    }
+
+    /* Profile Popup */
+    .profile-popup {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    .profile-popup.visible {
+      display: block;
+    }
+
+    .profile-popup p {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .profile-popup button {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    /* Greeting */
+    .greeting {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #ffdd57;
+    }
+
+    /* Withdrawal Popup */
+    .popup-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+      max-width: 320px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .popup h2 {
+      margin: 0;
+      font-size: 22px;
+      color: #333;
+    }
+
+    .popup input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .popup p {
+      font-size: 16px;
+      margin: 10px 0;
+      color: #666;
+    }
+
+    .submit-btn, .close-btn {
+      background: #6a11cb;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover, .close-btn:hover {
+      background: #2575fc;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon-container hidden" id="icon-container">
+      <div class="icon" id="profile-icon">👤</div>
+      <div class="icon" id="logout-icon">🚪</div>
+    </div>
+    <div class="profile-popup" id="profile-popup">
+      <input type="text" id="name-input" placeholder="Enter your name">
+      <button id="save-name-button">Save Name</button>
+      <p id="profile-name"></p>
+      <button id="logout-button-popup">Logout</button>
+    </div>
+    <h1>Spin and Win</h1>
+    <div class="greeting hidden" id="greeting">Welcome, User! 👋</div>
+    <div id="auth-section" class="fade-in">
+      <input type="email" id="email" placeholder="Email">
+      <input type="password" id="password" placeholder="Password">
+      <button id="login-button">Login</button>
+      <button id="register-button">Register</button>
+    </div>
+    <div id="game-section" class="hidden">
+      <div class="balance-info">
+        Balance: <span id="balance">0</span> points (<span id="rupee-balance">0</span> INR)
+      </div>
+      <button id="spin-button">🎡 Spin (10 spins left)</button>
+      <button id="watch-ad-button">📺 Watch Ad (50 ads left)</button>
+      <button id="withdraw-button" onclick="openWithdrawalPopup()">💸 Withdraw</button>
+    </div>
+    <!-- Withdrawal Popup -->
+    <div class="popup-container hidden" id="withdrawal-popup">
+      <div class="popup">
+        <h2>Withdraw Funds</h2>
+        <input type="number" id="withdrawal-amount" placeholder="Enter Amount (Points)">
+        <p>Equivalent Amount: <span id="withdrawal-inr">0</span> INR</p>
+        <input type="text" id="upi-id" placeholder="Enter UPI ID">
+        <button class="submit-btn" id="submit-withdrawal">Submit</button>
+        <button class="close-btn" onclick="closeWithdrawalPopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+    import { getDatabase, ref, set, get, update, push } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBS-yp0mE8k-GWCIi2TOTwvteyMO6g-Ifs",
+      authDomain: "spinwin-6f12e.firebaseapp.com",
+      databaseURL: "https://spinwin-6f12e-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "spinwin-6f12e",
+      storageBucket: "spinwin-6f12e.firebasestorage.app",
+      messagingSenderId: "435502069878",
+      appId: "1:435502069878:web:3d6aae68582a50aaec4757",
+      measurementId: "G-GPNCM76SR8"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    // DOM elements
+    const authSection = document.getElementById("auth-section");
+    const gameSection = document.getElementById("game-section");
+    const iconContainer = document.getElementById("icon-container");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginButton = document.getElementById("login-button");
+    const registerButton = document.getElementById("register-button");
+    const spinButton = document.getElementById("spin-button");
+    const watchAdButton = document.getElementById("watch-ad-button");
+    const withdrawButton = document.getElementById("withdraw-button");
+    const nameInput = document.getElementById("name-input");
+    const saveNameButton = document.getElementById("save-name-button");
+    const profileName = document.getElementById("profile-name");
+    const balanceDisplay = document.getElementById("balance");
+    const rupeeBalanceDisplay = document.getElementById("rupee-balance");
+    const profileIcon = document.getElementById("profile-icon");
+    const logoutIcon = document.getElementById("logout-icon");
+    const profilePopup = document.getElementById("profile-popup");
+    const logoutButtonPopup = document.getElementById("logout-button-popup");
+    const greeting = document.getElementById("greeting");
+    const withdrawalPopup = document.getElementById("withdrawal-popup");
+    const withdrawalAmountInput = document.getElementById("withdrawal-amount");
+    const withdrawalInr = document.getElementById("withdrawal-inr");
+    const upiIdInput = document.getElementById("upi-id");
+    const submitWithdrawalButton = document.getElementById("submit-withdrawal");
+
+    let userData = { balance: 0, spinsLeft: 10, adsLeft: 50 };
+
+    // Attach functions to the window object
+    window.openWithdrawalPopup = function () {
+      withdrawalPopup.style.display = "flex";
+    };
+
+    window.closeWithdrawalPopup = function () {
+      withdrawalPopup.style.display = "none";
+    };
+
+    // Function to convert points to INR
+    const convertPointsToINR = (points) => {
+      const conversionRate = 0.01; // 1 point = 0.01 INR
+      return (points * conversionRate).toFixed(2);
+    };
+
+    // Update INR value dynamically
+    withdrawalAmountInput.addEventListener("input", () => {
+      const points = parseFloat(withdrawalAmountInput.value) || 0;
+      const inrValue = convertPointsToINR(points);
+      withdrawalInr.textContent = inrValue;
+    });
+
+    // Function to fetch user's name
+    const getUserName = async (uid) => {
+      const snapshot = await get(ref(database, `users/${uid}`));
+      if (snapshot.exists()) {
+        return snapshot.val().name || "Unknown User";
+      }
+      return "Unknown User";
+    };
+
+    // Login function
+    loginButton.addEventListener("click", async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log("Logged in user:", userCredential.user);
+        loadUserData(userCredential.user.uid);
+      } catch (error) {
+        alert("Error logging in: " + error.message);
+      }
+    });
+
+    // Register function
+    registerButton.addEventListener("click", async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log("Registered user:", userCredential.user);
+        await set(ref(database, `users/${userCredential.user.uid}`), { balance: 0, spinsLeft: 10, adsLeft: 50 });
+        loadUserData(userCredential.user.uid);
+      } catch (error) {
+        alert("Error registering: " + error.message);
+      }
+    });
+
+    // Load user data from Firebase
+    const loadUserData = async (uid) => {
+      const snapshot = await get(ref(database, `users/${uid}`));
+      if (snapshot.exists()) {
+        userData = snapshot.val();
+        updateUI();
+        authSection.classList.add("hidden");
+        gameSection.classList.remove("hidden");
+        iconContainer.classList.remove("hidden");
+        greeting.classList.remove("hidden");
+        document.body.classList.add("logged-in");
+        loadUserProfile(uid);
+      }
+    };
+
+    // Update UI with user data
+    const updateUI = () => {
+      balanceDisplay.textContent = userData.balance;
+      rupeeBalanceDisplay.textContent = convertPointsToINR(userData.balance);
+      spinButton.textContent = `🎡 Spin (${userData.spinsLeft} spins left)`;
+      watchAdButton.textContent = `📺 Watch Ad (${userData.adsLeft} ads left)`;
+    };
+
+    // Load user profile
+    const loadUserProfile = async (uid) => {
+      const snapshot = await get(ref(database, `users/${uid}`));
+      if (snapshot.exists()) {
+        const userData = snapshot.val();
+        if (userData.name) {
+          profileName.textContent = `Welcome, ${userData.name}!`;
+          nameInput.value = userData.name;
+          greeting.textContent = `Welcome, ${userData.name}! 👋`;
+        } else {
+          profileName.textContent = "Please enter your name.";
+          greeting.textContent = "Welcome, User! 👋";
+        }
+      }
+    };
+
+    // Save user name
+    const saveUserName = async (uid, name) => {
+      try {
+        await update(ref(database, `users/${uid}`), { name: name });
+        profileName.textContent = `Welcome, ${name}!`;
+        greeting.textContent = `Welcome, ${name}! 👋`;
+        alert("Name saved successfully!");
+      } catch (error) {
+        console.error("Error saving name:", error);
+        alert("Error saving name: " + error.message);
+      }
+    };
+
+    // Event listener for saving name
+    saveNameButton.addEventListener("click", () => {
+      const name = nameInput.value.trim();
+      if (name) {
+        saveUserName(auth.currentUser.uid, name);
+      } else {
+        alert("Please enter a valid name.");
+      }
+    });
+
+    // Spin function with pop-under ad
+    spinButton.addEventListener("click", async () => {
+      if (userData.spinsLeft > 0) {
+        // Open the pop-under ad
+        const adUrl = "https://www.effectiveratecpm.com/kv45i4qu?key=df8ff440eae918bb8048d5f6112333f0";
+        const adWindow = window.open(adUrl, "_blank", "width=500,height=500");
+
+        // Move focus back to the game window
+        if (adWindow) {
+          window.focus();
+        }
+
+        // Monitor the pop-under window to detect when it is closed
+        const checkAdWindow = setInterval(() => {
+          if (adWindow.closed) {
+            // Clear the interval
+            clearInterval(checkAdWindow);
+
+            // Proceed with the spin logic
+            const points = Math.floor(Math.random() * 6); // 0 to 5 points
+            userData.balance += points;
+            userData.spinsLeft--;
+            update(ref(database, `users/${auth.currentUser.uid}`), userData)
+              .then(() => {
+                updateUI();
+                alert(`You won ${points} points!`);
+              })
+              .catch((error) => {
+                console.error("Error updating balance:", error);
+                alert("Error updating balance. Please try again.");
+              });
+          }
+        }, 1000); // Check every second
+      } else {
+        alert("No spins left for today.");
+      }
+    });
+
+    // Watch ad function
+    watchAdButton.addEventListener("click", async () => {
+      if (userData.adsLeft > 0) {
+        // Disable the "Watch Ad" button
+        watchAdButton.disabled = true;
+
+        // Open the ad URL in a new window (pop-under)
+        const adUrl = "https://www.effectiveratecpm.com/kv45i4qu?key=df8ff440eae918bb8048d5f6112333f0";
+        const adWindow = window.open(adUrl, "_blank", "width=500,height=500");
+
+        // Move focus back to the game window
+        if (adWindow) {
+          window.focus();
+        }
+
+        // Monitor the pop-under window to detect when it is closed
+        const checkAdWindow = setInterval(() => {
+          if (adWindow.closed) {
+            // Clear the interval
+            clearInterval(checkAdWindow);
+
+            // Increment balance and decrement ads left
+            userData.balance += 10;
+            userData.adsLeft--;
+
+            // Update Firebase
+            update(ref(database, `users/${auth.currentUser.uid}`), userData)
+              .then(() => {
+                updateUI();
+                alert("You earned 10 points for watching an ad!");
+              })
+              .catch((error) => {
+                console.error("Error updating balance:", error);
+                alert("Error updating balance. Please try again.");
+              });
+
+            // Re-enable the "Watch Ad" button
+            watchAdButton.disabled = false;
+          }
+        }, 1000); // Check every second
+      } else {
+        alert("No ads left for today.");
+      }
+    });
+
+    // Submit Withdrawal
+    submitWithdrawalButton.addEventListener("click", async () => {
+      const points = parseFloat(withdrawalAmountInput.value);
+      const upiId = upiIdInput.value.trim();
+
+      if (!points || points <= 0) {
+        alert("Please enter a valid withdrawal amount.");
+        return;
+      }
+
+      if (!upiId) {
+        alert("Please enter your UPI ID.");
+        return;
+      }
+
+      if (points > userData.balance) {
+        alert("Insufficient balance.");
+        return;
+      }
+
+      // Fetch the user's name
+      const userName = await getUserName(auth.currentUser.uid);
+
+      const withdrawalData = {
+        uid: auth.currentUser.uid, // User ID
+        name: userName, // User's name
+        upiId: upiId, // UPI ID
+        amount: points, // Withdrawal amount in points
+        inrAmount: convertPointsToINR(points), // Equivalent INR amount
+        timestamp: new Date().toISOString(), // Timestamp of the request
+      };
+
+      try {
+        // Save withdrawal data to Firebase
+        await push(ref(database, "withdrawals"), withdrawalData);
+
+        // Deduct points from balance
+        userData.balance -= points;
+        await update(ref(database, `users/${auth.currentUser.uid}`), userData);
+        updateUI();
+
+        // Show success message
+        alert("Your withdrawal request of ₹" + convertPointsToINR(points) + " has been submitted. It will be credited within 24 hours.");
+        closeWithdrawalPopup();
+      } catch (error) {
+        alert("Error submitting withdrawal: " + error.message);
+      }
+    });
+
+    // Logout function
+    const logout = async () => {
+      try {
+        await signOut(auth);
+        alert("Logged out successfully!");
+        authSection.classList.remove("hidden");
+        gameSection.classList.add("hidden");
+        iconContainer.classList.add("hidden");
+        greeting.classList.add("hidden");
+        document.body.classList.remove("logged-in");
+        profilePopup.classList.remove("visible");
+      } catch (error) {
+        alert("Error logging out: " + error.message);
+      }
+    };
+
+    // Show profile popup
+    profileIcon.addEventListener("click", () => {
+      profilePopup.classList.toggle("visible");
+    });
+
+    // Logout from popup
+    logoutButtonPopup.addEventListener("click", logout);
+
+    // Logout from icon
+    logoutIcon.addEventListener("click", logout);
+
+    // Check if user is logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadUserData(user.uid);
+      } else {
+        authSection.classList.remove("hidden");
+        gameSection.classList.add("hidden");
+        iconContainer.classList.add("hidden");
+        greeting.classList.add("hidden");
+        document.body.classList.remove("logged-in");
+      }
+    });
+  </script>
+</body>
+</html>
