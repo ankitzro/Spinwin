@@ -3,129 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Login</title>
+    <title>🔮 भविष्यवाणी ऐप</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #fafafa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background-color: #fff;
-            border: 1px solid #dbdbdb;
+            text-align: center;
+            background: linear-gradient(to right, #000428, #004e92);
+            color: white;
             padding: 20px;
-            text-align: center;
-            width: 300px;
         }
-        .logo {
-            width: 175px;
-            margin-bottom: 20px;
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
         }
-        .facebook-login {
-            background-color: #385185;
-            color: #fff;
+        input, select, button {
+            width: 100%;
             padding: 10px;
+            margin: 10px 0;
             border: none;
-            border-radius: 4px;
-            width: 100%;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 20px;
+            border-radius: 5px;
         }
-        .facebook-login:hover {
-            background-color: #2a3f6d;
-        }
-        .separator {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .separator::before, .separator::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #dbdbdb;
-        }
-        .separator:not(:empty)::before {
-            margin-right: .25em;
-        }
-        .separator:not(:empty)::after {
-            margin-left: .25em;
-        }
-        .input-field {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #dbdbdb;
-            border-radius: 3px;
-            font-size: 14px;
-        }
-        .login-button {
-            width: 100%;
-            padding: 10px;
-            background-color: #3897f0; /* Instagram's blue color */
-            border: none;
-            border-radius: 3px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: bold;
+        button {
+            background-color: #ffcc00;
+            color: black;
+            font-size: 18px;
             cursor: pointer;
         }
-        .login-button:hover {
-            background-color: #2680d9; /* Slightly darker blue on hover */
+        button:hover {
+            background-color: #ff9900;
         }
-        .forgot-password {
-            color: #003569;
-            font-size: 12px;
-            text-decoration: none;
-            display: block;
+        .result {
+            font-size: 18px;
+            font-weight: bold;
             margin-top: 10px;
         }
-        .signup {
-            margin-top: 20px;
-            font-size: 14px;
-        }
-        .signup a {
-            color: #3897f0; /* Instagram's blue color */
-            text-decoration: none;
+        .loading {
+            display: none;
+            font-size: 20px;
             font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+            animation: glow 1s infinite alternate;
         }
-        .terms {
-            font-size: 12px;
-            color: #8e8e8e;
-            margin-top: 20px;
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+            }
+            to {
+                text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <img src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png" alt="Instagram Logo" class="logo">
-        <button class="facebook-login">Continue with Facebook</button>
-        <div class="separator">OR</div>
-        <form id="loginForm">
-            <input type="text" id="username" class="input-field" placeholder="Phone number, username, or email" required>
-            <input type="password" id="password" class="input-field" placeholder="Password" required>
-            <button type="submit" class="login-button">Log in</button>
-        </form>
-        <a href="#" class="forgot-password">Forgot password?</a>
-        <div class="signup">
-            Don't have an account? <a href="#">Sign up</a>
-        </div>
-        <div class="terms">
-            By continuing, you agree to Instagram's <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.
-        </div>
+
+    <div class="container">
+        <h1>🔮 भविष्यवाणी ऐप 🔮</h1>
+        
+        <p>अपना नाम दर्ज करें:</p>
+        <input type="text" id="name" placeholder="अपना नाम दर्ज करें">
+        
+        <p>अपनी जन्मतिथि चुनें:</p>
+        <input type="date" id="dob">
+        
+        <p>लिंग चुनें:</p>
+        <select id="gender">
+            <option value="male">👨 पुरुष</option>
+            <option value="female">👩 महिला</option>
+        </select>
+        
+        <button onclick="justKnow()">🔮 सिर्फ जाने 🔮</button>
+        <button onclick="showDetails()">🔮 और जानें 🔮</button>
+
+        <p class="loading" id="loadingText">🔮 रहस्यमय भविष्यवाणी हो रही है... 🔮</p>
+
+        <p class="result" id="parentResult"></p>
+        <p class="result" id="loveResult"></p>
+        <p class="result" id="ageResult"></p>
+        <p class="result" id="randomPrediction"></p>
+
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent the form from submitting
-            alert('Niakl Laure'); // Display the pop-up message
-        });
+        function showDetails() {
+            let nameInput = document.getElementById("name").value.trim().toLowerCase();
+            let dob = document.getElementById("dob").value;
+            let gender = document.getElementById("gender").value;
+            let loadingText = document.getElementById("loadingText");
+
+            document.getElementById("parentResult").innerText = "";
+            document.getElementById("loveResult").innerText = "";
+            document.getElementById("ageResult").innerText = "";
+            document.getElementById("randomPrediction").innerText = "";
+
+            loadingText.style.display = "block";
+
+            setTimeout(() => {
+                loadingText.style.display = "none";
+
+                let parentText = "";
+                let loveText = "";
+                let ageText = "";
+                let randomText = "";
+
+                let specialPersons = {
+                    "shyam basfore": {
+                        "father": "Bishnu Basfore",
+                        "mother": "Gauri Basfore",
+                        "love": "💖 आपकी प्रेमिका का नाम 'P' अक्षर से शुरू होगा!",
+                        "career": "🎓 आप IAS बन सकते हैं!",
+                        "luckyNumber": 7,
+                        "specialMessage": "🚀 आप एक महान इंसान बनने वाले हैं!"
+                    },
+                    "rahul verma": {
+                        "father": "Ramesh Verma",
+                        "mother": "Sita Verma",
+                        "love": "💖 आपकी प्रेमिका का नाम 'S' से शुरू होगा!",
+                        "career": "💼 आप एक सफल बिजनेसमैन बनेंगे!",
+                        "luckyNumber": 3,
+                        "specialMessage": "🌟 आपकी किस्मत बहुत चमकने वाली है!"
+                    },
+                    "raju das": {
+                        "father": "Raj Kumar Das",
+                        "mother": "Pramila Das",
+                        "love": "💖 आपकी प्रेमिका का नाम 'M' अक्षर से शुरू होगा!",
+                        "career": "💻 आप एक सफल सॉफ्टवेयर डेवलपर बन सकते हैं!",
+                        "luckyNumber": 5,
+                        "specialMessage": "✨ आपकी मेहनत एक दिन आपको बहुत ऊँचाइयों तक ले जाएगी!"
+                    }
+                };
+
+                if (nameInput === "") {
+                    parentText = "❌ कृपया नाम दर्ज करें!";
+                } else if (specialPersons[nameInput]) {
+                    let person = specialPersons[nameInput];
+                    parentText = `👨 पिता का नाम: ${person.father}\n👩 माता का नाम: ${person.mother}`;
+                    loveText = person.love;
+                    ageText = `🎂 आपकी उम्र ${new Date().getFullYear() - new Date(dob).getFullYear()} वर्ष है!`;
+                    randomText = `💼 करियर: ${person.career}\n🍀 लकी नंबर: ${person.luckyNumber}\n✨ ${person.specialMessage}`;
+                } else {
+                    let firstName = nameInput.split(" ")[0];
+                    let lastLetter = firstName.slice(-1).toUpperCase();
+                    let vowels = "AEIOU";
+                    let consonants = "BCDFGHJKLMNPQRSTV";
+
+                    if (gender === "male") {
+                        let loveInitial = vowels.includes(lastLetter) ? "I" : (consonants.includes(lastLetter) ? "A" : "?");
+                        loveText = `💖 आपके जीवनसाथी का नाम '${loveInitial}' अक्षर से शुरू हो सकता है!`;
+                    } else {
+                        let allowedLetters = "ABCDEFGHJKLMNOPQRSTUV";
+                        let randomLetter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
+                        loveText = `💖 आपके जीवनसाथी का नाम '${randomLetter}' अक्षर से शुरू हो सकता है!`;
+                    }
+                }
+
+                document.getElementById("parentResult").innerText = parentText;
+                document.getElementById("loveResult").innerText = loveText;
+                document.getElementById("ageResult").innerText = ageText;
+                document.getElementById("randomPrediction").innerText = randomText;
+
+            }, 3000);
+        }
+
+        function justKnow() {
+            let loadingText = document.getElementById("loadingText");
+            let randomPredictions = [
+                "🌟 आपका आने वाला समय बहुत शानदार होगा!",
+                "⚠️ आपको अपने करियर पर ज्यादा ध्यान देना चाहिए!",
+                "💰 पैसा आने वाला है, लेकिन मेहनत करनी होगी!",
+                "❤️ कोई नया व्यक्ति आपके जीवन में आने वाला है!",
+                "🔮 आपकी किस्मत अचानक बदल सकती है!"
+            ];
+
+            document.getElementById("randomPrediction").innerText = "";
+            loadingText.style.display = "block";
+
+            setTimeout(() => {
+                loadingText.style.display = "none";
+                document.getElementById("randomPrediction").innerText = randomPredictions[Math.floor(Math.random() * randomPredictions.length)];
+            }, 3000);
+        }
     </script>
+
 </body>
 </html>
